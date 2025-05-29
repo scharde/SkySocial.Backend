@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{EA721437-5DB8-468F-99B5-5ACA1BF5590D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Web", "API\API.Web.csproj", "{EA721437-5DB8-468F-99B5-5ACA1BF5590D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{62175316-87E7-4CF9-8425-88345E43E1A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "Services\API.csproj", "{62175316-87E7-4CF9-8425-88345E43E1A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "Domain\DAL.csproj", "{6828A317-AEC9-4A61-B97E-BA61984F48D7}"
 EndProject
