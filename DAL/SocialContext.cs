@@ -1,11 +1,12 @@
 ﻿using DAL.Entity;
 using DAL.Model;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL;
 
-public class SocialContext: IdentityDbContext<ApplicationUser>
+public class SocialContext: IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public SocialContext(DbContextOptions<SocialContext> options) : base(options)
     {

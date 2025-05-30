@@ -1,0 +1,113 @@
+using System.Text;
+using DAL;
+using DAL.Model;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using API;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+        policy =>
+        {
+            policy.WithOrigins(builder.Configuration.GetValue<string>("CorsSettings:AllowedOrigins").Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .AllowAnyHeader()
+                .WithMethods(builder.Configuration.GetValue<string>("CorsSettings:AllowedMethods").Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .AllowCredentials();
+        });
+});
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(opt =>
+    {
+        opt.Password.RequireDigit = true;
+        opt.Password.RequireLowercase = true;
+        opt.Password.RequireNonAlphanumeric = true;
+        opt.Password.RequireUppercase = true;
+        opt.Password.RequiredLength = 8;
+        opt.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<SocialContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddServices(builder.Configuration);
+
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    var clientId = builder.Configuration["Authentication:Google:ClientId"];
+    if (clientId is null)
+        throw new ArgumentNullException(nameof(clientId));
+    
+    var clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    if (clientSecret is null)
+        throw new ArgumentNullException(nameof(clientSecret));
+    
+    options.ClientId = clientId;
+    options.ClientSecret = clientSecret;
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var jwtOptions = builder.Configuration.GetSection(JwtOptions.JwtOptionsKey)?.Get<JwtOptions>();
+    if (jwtOptions is null)
+        throw new ArgumentNullException(nameof(jwtOptions));
+        
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtOptions.Issuer,
+        ValidAudience = jwtOptions.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret))
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            context.Token = context.Request.Query["ACCESS_TOKEN"];
+            return Task.CompletedTask;
+        }
+    };
+});
+
+builder.Services.AddAuthorization();
+
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseCors("AllowSpecificOrigins");
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

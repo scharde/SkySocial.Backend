@@ -2,12 +2,12 @@
 
 public partial class AuthResource
 {
-    public async Task<string> LoginAsync(string email, string password)
+    public async Task<(string jwtToken, DateTime expiresAtUtc)> LoginAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null || !await _userManager.CheckPasswordAsync(user, password))
             throw new UnauthorizedAccessException("Invalid login");
 
-        return GenerateJwtToken(user);
+        return _tokenProcessor.GenerateJwtToken(user);
     }
 }
