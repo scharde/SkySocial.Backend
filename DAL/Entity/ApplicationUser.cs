@@ -11,7 +11,8 @@ public class ApplicationUser: IdentityUser<Guid>
     
     public ICollection<PostEntity> Posts { get; set; }
     public ICollection<CommentEntity> Comments { get; set; }
-    public ICollection<VoteEntity> Votes { get; set; }
+    public ICollection<PostVoteEntity> PostVotes { get; set; }
+    public ICollection<CommentVoteEntity> CommentVotes { get; set; }
     
     public static ApplicationUser Create(string email, string firstName, string lastName)
     {

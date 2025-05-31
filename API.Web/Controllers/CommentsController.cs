@@ -13,16 +13,16 @@ public class CommentsController(ICommentsResource commentsResource) : BaseContro
     private readonly ICommentsResource _commentsResource = commentsResource;
 
     [HttpGet]
-    public async Task<IActionResult> GetComments(Guid postId, int page = 1, int perPage = 20)
+    public async Task<IActionResult> GetComments(Guid postId, int page = 1, int pageSize = 20)
     {
-        var result = await _commentsResource.Get(postId, page, perPage);
+        var result = await _commentsResource.Get(postId, page, pageSize);
         return Ok(result);   
     }
     
     [HttpGet("{parentCommentId}/replies")]
-    public async Task<IActionResult> GetReplies(Guid parentCommentId, int page = 1, int perPage = 10)
+    public async Task<IActionResult> GetReplies(Guid parentCommentId, int page = 1, int pageSize = 10)
     {
-        var result = await _commentsResource.GetReplies(parentCommentId, page, perPage);
+        var result = await _commentsResource.GetReplies(parentCommentId, page, pageSize);
         return Ok(result);
     }
 

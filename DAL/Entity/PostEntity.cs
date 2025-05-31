@@ -7,4 +7,7 @@ public class PostEntity : BaseEntity
 
     public string Content { get; set; }
     public int Score { get; set; }
+    
+    public ICollection<CommentEntity> Comments { get; set; } = new List<CommentEntity>();
+    public ICollection<PostVoteEntity> PostVotes { get; set; } = new List<PostVoteEntity>();
 }

@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using API.Post;
 using DAL.Model;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +11,16 @@ namespace API.Web.Controllers;
 public class PostController(IPostResource postResource) : BaseController
 {
     private readonly IPostResource _postResource = postResource;
+
+    [HttpGet("feed")]
+    public async Task<IActionResult> GetFeed(int page = 1, int pageSize = 10)
+    {
+        if (CurrentUserId == null)
+            return Unauthorized();
+
+        var result = await _postResource.GetFeed(CurrentUserId.Value, page, pageSize);
+        return Ok(result);
+    }
 
     [HttpPost]
     public async Task<IActionResult> CreatePost([FromBody] PostCreateRequest request)

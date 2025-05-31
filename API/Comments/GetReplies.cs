@@ -5,9 +5,9 @@ namespace API.Comments;
 
 public partial class CommentsResource
 {
-    public async Task<PageResponse<CommentResponse>> GetReplies(Guid parentCommentId, int page = 1, int perPage = 10)
+    public async Task<PageResponse<CommentResponse>> GetReplies(Guid parentCommentId, int page = 1, int pageSize = 10)
     {
-        if (page < 1 || perPage < 1)
+        if (page < 1 || pageSize < 1)
             throw new BadRequestException("Invalid pagination values");
         
         if (parentCommentId == Guid.Empty)
@@ -19,8 +19,8 @@ public partial class CommentsResource
         var totalCount = await query.CountAsync();
 
         var replies = await query
-            .Skip((page - 1) * perPage)
-            .Take(perPage)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(x => new CommentResponse()
             {
                 Id = x.Id,
@@ -36,7 +36,7 @@ public partial class CommentsResource
         {
             TotalCount = totalCount,
             Page = page,
-            PageSize = perPage,
+            PageSize = pageSize,
             Items = replies
         };
     }

@@ -10,7 +10,9 @@ public class SocialDbContext(DbContextOptions<SocialDbContext> options): Identit
 {
     public DbSet<PostEntity> Posts { get; set; }
     public DbSet<CommentEntity> Comments { get; set; }
-    public DbSet<VoteEntity> Votes { get; set; }
+    public DbSet<PostVoteEntity> PostVotes { get; set; }
+    public DbSet<CommentVoteEntity> CommentVotes { get; set; }
+
     public DbSet<FollowerEntity> Followers { get; set; }
     public DbSet<SessionEntity> Sessions { get; set; }
 
@@ -20,13 +22,27 @@ public class SocialDbContext(DbContextOptions<SocialDbContext> options): Identit
 
         builder.Entity<PostEntity>().ToTable("Post");
         builder.Entity<CommentEntity>().ToTable("Comment");
-        builder.Entity<VoteEntity>().ToTable("Vote");
+        builder.Entity<PostVoteEntity>().ToTable("PostVote");
+        builder.Entity<CommentVoteEntity>().ToTable("CommentVote");
+
         builder.Entity<FollowerEntity>().ToTable("Follower");
         builder.Entity<ApplicationUser>().ToTable("User");
 
         builder.Entity<FollowerEntity>()
             .HasKey(f => new { f.FollowerId, f.FolloweeId });
 
+        builder.Entity<PostEntity>()
+            .HasMany(f => f.Comments)
+            .WithOne(c => c.Post)
+            .HasForeignKey(d => d.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<PostEntity>()
+            .HasMany(f => f.PostVotes)
+            .WithOne(c => c.Post)
+            .HasForeignKey(d => d.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         builder.Entity<FollowerEntity>()
             .HasOne(f => f.Follower)
             .WithMany()
@@ -45,8 +61,12 @@ public class SocialDbContext(DbContextOptions<SocialDbContext> options): Identit
             .HasForeignKey(c => c.AuthorId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<VoteEntity>()
-            .HasIndex(v => new { v.UserId, v.TargetId, v.TargetType })
+        builder.Entity<PostVoteEntity>()
+            .HasIndex(v => new { v.UserId, v.PostId })
+            .IsUnique();
+        
+        builder.Entity<CommentVoteEntity>()
+            .HasIndex(v => new { v.UserId, v.CommentId })
             .IsUnique();
     }
 }
