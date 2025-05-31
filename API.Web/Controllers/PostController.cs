@@ -9,29 +9,27 @@ namespace API.Web.Controllers;
 [Route("api/[controller]")]
 [Authorize]
 [ApiController]
-public class PostController(IPostResource postResource) : ControllerBase
+public class PostController(IPostResource postResource) : BaseController
 {
     private readonly IPostResource _postResource = postResource;
 
     [HttpPost]
     public async Task<IActionResult> CreatePost([FromBody] PostCreateRequest request)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(userId, out Guid userGuid))
+        if (CurrentUserId == null)
             return Unauthorized();
 
-        var createdPost = await _postResource.CreatePost(request, userGuid);
+        var createdPost = await _postResource.CreatePost(request, CurrentUserId.Value);
         return Ok(createdPost);
     }
 
     [HttpPut("{postId}")]
     public async Task<IActionResult> EditPost(Guid postId, [FromBody] PostUpdateRequest request)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(userId, out Guid userGuid))
+        if (CurrentUserId == null)
             return Unauthorized();
 
-        var updatedPost = await _postResource.EditPost(postId, request, userGuid);
+        var updatedPost = await _postResource.EditPost(postId, request, CurrentUserId.Value);
         return Ok(updatedPost);
     }
 }

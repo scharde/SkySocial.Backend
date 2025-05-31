@@ -1,4 +1,5 @@
 ﻿using API.Auth;
+using API.Comments;
 using API.Post;
 using API.TokenProcessor;
 using DAL;
@@ -14,7 +15,8 @@ public static class Bootstrapper
         services.AddDAL(configuration)
             .AddTransient<IAuthResource, AuthResource>()
             .AddTransient<IAuthTokenProcessor, AuthTokenProcessor>()
-            .AddTransient<IPostResource, PostResource>();
+            .AddTransient<IPostResource, PostResource>()
+            .AddTransient<ICommentsResource, CommentsResource>();
 
         return services;
     }
