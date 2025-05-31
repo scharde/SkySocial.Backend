@@ -1,4 +1,5 @@
-﻿using DAL.Model;
+﻿using DAL.Entity;
+using DAL.Model;
 
 namespace API.Auth;
 

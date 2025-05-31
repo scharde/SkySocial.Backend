@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using DAL.Entity;
 using DAL.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -17,16 +18,11 @@ public interface IAuthTokenProcessor
     void WriteAuthTokenAsHttpOnlyCookie(string cookieName, string token, DateTime expiration);
 }
 
-public class AuthTokenProcessor : IAuthTokenProcessor
+public class AuthTokenProcessor(IOptions<JwtOptions> jwtOptions, IHttpContextAccessor httpContextAccessor)
+    : IAuthTokenProcessor
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly JwtOptions _jwtOptions;
-    
-    public AuthTokenProcessor(IOptions<JwtOptions> jwtOptions, IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-        _jwtOptions = jwtOptions.Value;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private readonly JwtOptions _jwtOptions = jwtOptions.Value;
 
     public (string jwtToken, DateTime expiresAtUtc) GenerateJwtToken(ApplicationUser user)
     {
@@ -41,20 +37,20 @@ public class AuthTokenProcessor : IAuthTokenProcessor
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.NameIdentifier, user.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
 
         var expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationTimeInMinutes);
 
         var token = new JwtSecurityToken
-            (
-                issuer: _jwtOptions.Issuer,
-                audience: _jwtOptions.Audience,
-                claims: claims,
-                expires: expires,
-                signingCredentials: credentials
-            );
-        
+        (
+            issuer: _jwtOptions.Issuer,
+            audience: _jwtOptions.Audience,
+            claims: claims,
+            expires: expires,
+            signingCredentials: credentials
+        );
+
         var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
         return (jwtToken, expires);
     }
@@ -66,7 +62,7 @@ public class AuthTokenProcessor : IAuthTokenProcessor
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
     }
-    
+
     public void WriteAuthTokenAsHttpOnlyCookie(string cookieName, string token, DateTime expiration)
     {
         _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName,

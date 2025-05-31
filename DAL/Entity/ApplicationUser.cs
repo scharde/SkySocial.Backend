@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace DAL.Model;
+namespace DAL.Entity;
 
 public class ApplicationUser: IdentityUser<Guid>
 {
@@ -8,6 +8,10 @@ public class ApplicationUser: IdentityUser<Guid>
     public required string LastName { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; set; }
+    
+    public ICollection<PostEntity> Posts { get; set; }
+    public ICollection<CommentEntity> Comments { get; set; }
+    public ICollection<VoteEntity> Votes { get; set; }
     
     public static ApplicationUser Create(string email, string firstName, string lastName)
     {

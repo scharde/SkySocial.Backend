@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DAL.Entity;
+﻿namespace DAL.Entity;
 
 public class BaseEntity
 {
-    public int Id { get; set; }
-    public DateTime CreatedTime { get; set; }
-    public DateTime ModifiedTime { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public DateTime CreatedDateUtc { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedDateUtc { get; set; } = DateTime.UtcNow;
 }

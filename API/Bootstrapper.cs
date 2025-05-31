@@ -1,4 +1,5 @@
 ﻿using API.Auth;
+using API.Post;
 using API.TokenProcessor;
 using DAL;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +13,8 @@ public static class Bootstrapper
     {
         services.AddDAL(configuration)
             .AddTransient<IAuthResource, AuthResource>()
-            .AddTransient<IAuthTokenProcessor, AuthTokenProcessor>();
+            .AddTransient<IAuthTokenProcessor, AuthTokenProcessor>()
+            .AddTransient<IPostResource, PostResource>();
 
         return services;
     }

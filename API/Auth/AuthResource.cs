@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using API.TokenProcessor;
+using DAL.Entity;
 using DAL.Model;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,18 +14,11 @@ public interface IAuthResource
     Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal);
 }
 
-public partial class AuthResource : IAuthResource
+public partial class AuthResource(
+    UserManager<ApplicationUser> userManager,
+    IAuthTokenProcessor tokenProcessor
+) : IAuthResource
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IAuthTokenProcessor _tokenProcessor;
-
-    public AuthResource
-    (
-        UserManager<ApplicationUser> userManager,
-        IAuthTokenProcessor tokenProcessor
-    )
-    {
-        _userManager = userManager;
-        _tokenProcessor = tokenProcessor;
-    }
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IAuthTokenProcessor _tokenProcessor = tokenProcessor;
 }

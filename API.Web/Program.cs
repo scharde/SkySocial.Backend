@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using API;
+using API.Web.Middleware;
+using DAL.Entity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(opt =>
         opt.Password.RequiredLength = 8;
         opt.User.RequireUniqueEmail = true;
     })
-    .AddEntityFrameworkStores<SocialContext>()
+    .AddEntityFrameworkStores<SocialDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddServices(builder.Configuration);
@@ -104,6 +106,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowSpecificOrigins");
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -8,7 +8,7 @@ public static class Bootstrapper
 {
     public static IServiceCollection AddDAL(this IServiceCollection services, IConfigurationRoot configuration)
     {
-        services.AddDbContext<SocialContext>(options =>
+        services.AddDbContext<SocialDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("Social"))
         );
 

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using DAL.Entity;
 using DAL.Model;
 using Microsoft.AspNetCore.Identity;
 

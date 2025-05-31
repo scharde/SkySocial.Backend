@@ -1,5 +1,5 @@
 ﻿using API.Auth;
-using DAL.Model;
+using DAL.Entity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
@@ -11,20 +11,13 @@ namespace API.Web.Controllers;
 [Route("api/[controller]")]
 [AllowAnonymous]
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController(
+    IAuthResource authResource,
+    SignInManager<ApplicationUser> signInManager
+) : ControllerBase
 {
-    private readonly IAuthResource _authResource;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-
-    public AuthController
-    (
-        IAuthResource authResource,
-        SignInManager<ApplicationUser> signInManager
-    )
-    {
-        _authResource = authResource;
-        _signInManager = signInManager;
-    }
+    private readonly IAuthResource _authResource = authResource;
+    private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
@@ -39,7 +32,7 @@ public class AuthController : ControllerBase
         var token = await _authResource.LoginAsync(request.Email, request.Password);
         return Ok(new { token });
     }
-    
+
     [HttpGet("google-login")]
     public IActionResult LoginGoogle([FromQuery] string returnUrl, [FromServices] LinkGenerator linkGenerator)
     {
@@ -73,12 +66,5 @@ public class AuthController : ControllerBase
         {
             return Redirect(returnUrl);
         }
-    }
-
-    [HttpPost("oauth-login")]
-    public async Task<IActionResult> ExternalLogin([FromBody] ExternalLoginDto dto)
-    {
-        var token = await _authResource.ExternalLoginAsync(dto);
-        return Ok(new { token });
     }
 }
