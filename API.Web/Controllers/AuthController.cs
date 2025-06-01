@@ -9,17 +9,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Web.Controllers;
 
 [Route("api/[controller]")]
-[AllowAnonymous]
 [ApiController]
 public class AuthController(
     IAuthResource authResource,
     SignInManager<ApplicationUser> signInManager
-) : ControllerBase
+) : BaseController
 {
     private readonly IAuthResource _authResource = authResource;
     private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var token = await _authResource.RegisterAsync(request);
@@ -27,6 +27,7 @@ public class AuthController(
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] RegisterRequest request)
     {
         var token = await _authResource.LoginAsync(request.Email, request.Password);
@@ -34,6 +35,7 @@ public class AuthController(
     }
 
     [HttpGet("google-login")]
+    [AllowAnonymous]
     public IActionResult LoginGoogle([FromQuery] string returnUrl, [FromServices] LinkGenerator linkGenerator)
     {
         var callbackUrl = linkGenerator.GetPathByName(HttpContext, "GoogleLoginCallback")
@@ -48,6 +50,7 @@ public class AuthController(
     }
 
     [HttpGet("google-login-callback", Name = "GoogleLoginCallback")]
+    [AllowAnonymous]
     public async Task<IActionResult> GoogleLoginCallback([FromQuery] string returnUrl = "/")
     {
         var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
@@ -66,5 +69,24 @@ public class AuthController(
         {
             return Redirect(returnUrl);
         }
+    }
+
+    [HttpGet("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+
+        return Ok();
+    }
+
+    [HttpGet("check-auth")]
+    [Authorize]
+    public IActionResult CheckAuth()
+    {
+        if (CurrentUserId is null)
+            return Unauthorized();
+
+        return Ok();
     }
 }
