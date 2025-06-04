@@ -15,4 +15,6 @@ public class CommentEntity : BaseEntity
 
     public string Content { get; set; }
     public int Score { get; set; } = 0;
+    
+    public ICollection<CommentVoteEntity> CommentVotes { get; set; } = new List<CommentVoteEntity>();
 }

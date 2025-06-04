@@ -68,11 +68,7 @@ public class AuthTokenProcessor(IOptions<JwtOptions> jwtOptions, IHttpContextAcc
         _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName,
             token, new CookieOptions
             {
-                HttpOnly = true,
-                Expires = expiration,
-                IsEssential = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict
+                Expires = expiration
             });
     }
 }

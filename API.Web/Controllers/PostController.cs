@@ -12,7 +12,7 @@ public class PostController(IPostResource postResource) : BaseController
 {
     private readonly IPostResource _postResource = postResource;
 
-    [HttpGet("feed")]
+    [HttpGet]
     public async Task<IActionResult> GetFeed(int page = 1, int pageSize = 10)
     {
         if (CurrentUserId == null)

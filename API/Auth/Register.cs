@@ -13,7 +13,7 @@ public partial class AuthResource
             throw new Exception($"User with email: {registerRequest.Email} already exists");
         }
         
-        var user = ApplicationUser.Create(registerRequest.Email, registerRequest.FirstName, registerRequest.LastName);
+        var user = ApplicationUser.Create(registerRequest.Email, registerRequest.FirstName, registerRequest.LastName, null);
         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, registerRequest.Password);
 
         var result = await _userManager.CreateAsync(user, registerRequest.Password);

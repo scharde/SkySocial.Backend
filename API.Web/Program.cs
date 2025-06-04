@@ -40,6 +40,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(opt =>
 
 builder.Services.AddServices(builder.Configuration);
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromHours(6);
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
 builder.Services.AddAuthentication(opt =>
 {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -81,13 +88,15 @@ builder.Services.AddAuthentication(opt =>
     {
         OnMessageReceived = context =>
         {
-            context.Token = context.Request.Query["ACCESS_TOKEN"];
+            var accessToken = context.Request.Cookies["ACCESS_TOKEN"];
+            context.Token = accessToken;
             return Task.CompletedTask;
         }
     };
 });
 
 builder.Services.AddAuthorization();
+
 
 
 builder.Services.AddControllers();

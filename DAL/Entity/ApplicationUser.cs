@@ -6,6 +6,7 @@ public class ApplicationUser: IdentityUser<Guid>
 {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
+    public required string Title { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; set; }
     
@@ -14,14 +15,15 @@ public class ApplicationUser: IdentityUser<Guid>
     public ICollection<PostVoteEntity> PostVotes { get; set; }
     public ICollection<CommentVoteEntity> CommentVotes { get; set; }
     
-    public static ApplicationUser Create(string email, string firstName, string lastName)
+    public static ApplicationUser Create(string email, string firstName, string lastName, string title)
     {
         return new ApplicationUser
         {
             Email = email,
             UserName = email,
             FirstName = firstName,
-            LastName = lastName
+            LastName = lastName,
+            Title = title
         };
     }
     

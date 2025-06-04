@@ -65,8 +65,20 @@ public class SocialDbContext(DbContextOptions<SocialDbContext> options): Identit
             .HasIndex(v => new { v.UserId, v.PostId })
             .IsUnique();
         
+        builder.Entity<PostVoteEntity>()
+            .HasOne(v => v.User)
+            .WithMany(u => u.PostVotes)
+            .HasForeignKey(v => v.UserId)
+            .OnDelete(DeleteBehavior.Restrict); // 👈 Avoid cascade
+
         builder.Entity<CommentVoteEntity>()
             .HasIndex(v => new { v.UserId, v.CommentId })
             .IsUnique();
+        
+        builder.Entity<CommentVoteEntity>()
+            .HasOne(v => v.Comment)
+            .WithMany(p => p.CommentVotes)
+            .HasForeignKey(v => v.CommentId)
+            .OnDelete(DeleteBehavior.Restrict); 
     }
 }

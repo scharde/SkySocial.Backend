@@ -21,8 +21,11 @@ public partial class PostResource
             {
                 Post = p,
                 IsFollowedAuthor = followedUserIds.Contains(p.AuthorId),
-                Score = p.PostVotes.Sum(x => x.Type == VoteType.Upvote ? 1 : -1 ),
+                Score = p.PostVotes.Sum(x => x.Type == VoteType.Upvote ? 1 : -1),
                 CommentCount = p.Comments.Count,
+                UpVotesCount = p.PostVotes.Count(x => x.Type == VoteType.Upvote),
+                DownVotesCount = p.PostVotes.Count(x => x.Type == VoteType.Downvote),
+                UserVote = _dbContext.PostVotes.Where(x => x.UserId == userId && x.PostId == p.Id).Select(x => x.Type).SingleOrDefault(),
                 CreatedDateUtc = p.CreatedDateUtc
             });
 
@@ -40,11 +43,19 @@ public partial class PostResource
             {
                 Id = x.Post.Id,
                 Content = x.Post.Content,
-                AuthorId = x.Post.AuthorId,
-                AuthorName = x.Post.Author.UserName,
+                Author = new AuthorDetail
+                {
+                    Id = x.Post.AuthorId, 
+                    Name = $"{x.Post.Author.FirstName} {x.Post.Author.LastName}",
+                    Title = x.Post.Author.Title,
+                    IsFollowing = x.IsFollowedAuthor,
+                },
                 Score = x.Score,
                 CommentCount = x.CommentCount,
-                CreatedDateUtc = x.CreatedDateUtc
+                UpVotes = x.UpVotesCount,
+                DownVotes = x.DownVotesCount,
+                CreatedDateUtc = x.CreatedDateUtc,
+                UserVote = x.UserVote
             })
             .ToListAsync();
 

@@ -12,7 +12,7 @@ public partial class AuthResource
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
         {
-            user = new ApplicationUser() { Email = dto.Email, FirstName = dto.Email, LastName = ""};
+            user = new ApplicationUser() { Email = dto.Email, FirstName = dto.Email, LastName = "", Title = null};
             await _userManager.CreateAsync(user);
         }
 

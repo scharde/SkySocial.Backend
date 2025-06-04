@@ -1,7 +1,9 @@
 ﻿using API.Auth;
 using API.Comments;
 using API.Post;
+using API.PostVote;
 using API.TokenProcessor;
+using API.User;
 using DAL;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,8 @@ public static class Bootstrapper
             .AddTransient<IAuthResource, AuthResource>()
             .AddTransient<IAuthTokenProcessor, AuthTokenProcessor>()
             .AddTransient<IPostResource, PostResource>()
+            .AddTransient<IUserResource, UserResource>()
+            .AddTransient<IPostVoteResource, PostVoteResource>()
             .AddTransient<ICommentsResource, CommentsResource>();
 
         return services;

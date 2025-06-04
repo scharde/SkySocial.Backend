@@ -17,6 +17,7 @@ public partial class PostResource
         };
 
         await _dbContext.Posts.AddAsync(post);
+        await _dbContext.SaveChangesAsync(); 
         return post;
     }
 }

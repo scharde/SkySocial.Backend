@@ -29,7 +29,7 @@ public partial class CommentsResource
         };
         
         await _dbContext.Comments.AddAsync(comment);
-        
+        await _dbContext.SaveChangesAsync(); 
         return new CommentResponse()
         {
             Id = comment.Id,

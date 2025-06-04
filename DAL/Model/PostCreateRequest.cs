@@ -1,3 +1,5 @@
+using DAL.Entity;
+
 namespace DAL.Model;
 
 public class PostCreateRequest
@@ -10,16 +12,25 @@ public class PostUpdateRequest
     public string Content { get; set; }
 }
 
+public class AuthorDetail
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public string Title { get; set; }
+    public string Avatar { get; set; }
+    public bool IsFollowing { get; set; }
+}
+
 public class PostResponse
 {
     public Guid Id { get; set; }
     public string Content { get; set; }
 
-    public Guid AuthorId { get; set; }
-    public string AuthorName { get; set; }
-
+    public AuthorDetail Author { get; set; }
     public int Score { get; set; }
     public int CommentCount { get; set; }
-
+    public int UpVotes { get; set; }
+    public int DownVotes { get; set; }
+    public VoteType UserVote { get; set; }
     public DateTime CreatedDateUtc { get; set; }
 }

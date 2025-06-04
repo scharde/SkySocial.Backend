@@ -29,7 +29,8 @@ public partial class AuthResource
                 Email = email,
                 FirstName = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
                 LastName = claimsPrincipal.FindFirstValue(ClaimTypes.Surname) ?? string.Empty,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                Title = null
             };
 
             var result = await _userManager.CreateAsync(newUser);
