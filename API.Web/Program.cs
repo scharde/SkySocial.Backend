@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using API;
 using API.Web.Middleware;
 using DAL.Entity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +112,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<SocialDbContext>();
+    db.Database.Migrate(); // auto-run migrations
 }
 
 app.UseCors("AllowSpecificOrigins");

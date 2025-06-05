@@ -12,14 +12,7 @@ public class PostUpdateRequest
     public string Content { get; set; }
 }
 
-public class AuthorDetail
-{
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Title { get; set; }
-    public string Avatar { get; set; }
-    public bool IsFollowing { get; set; }
-}
+
 
 public class PostResponse
 {

@@ -13,7 +13,7 @@ public class CommentCreateRequest
 public class CommentResponse : BaseEntity
 {
     public string Content { get; set; }
-    public Guid AuthorId { get; set; }
+    public AuthorDetail Author { get; set; }
     public Guid? ParentCommentId { get; set; }
     public int Score { get; set; }
 }

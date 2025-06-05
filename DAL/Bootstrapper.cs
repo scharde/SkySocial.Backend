@@ -8,10 +8,13 @@ public static class Bootstrapper
 {
     public static IServiceCollection AddDAL(this IServiceCollection services, IConfigurationRoot configuration)
     {
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+                               ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+        
         services.AddDbContext<SocialDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("Social"))
+            options.UseSqlServer(connectionString)
         );
-
+        
         return services;
     }
 }

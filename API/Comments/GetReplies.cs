@@ -14,6 +14,7 @@ public partial class CommentsResource
             throw new BadRequestException("Invalid parent comment id");
 
         var query = _dbContext.Comments
+            .Include(p => p.Author)
             .Where(x => x.ParentCommentId == parentCommentId);
 
         var totalCount = await query.CountAsync();
@@ -24,7 +25,11 @@ public partial class CommentsResource
             .Select(x => new CommentResponse()
             {
                 Id = x.Id,
-                AuthorId = x.AuthorId,
+                Author = new AuthorDetail()
+                {
+                    Id = x.AuthorId,
+                    Name = x.Author.ToString()
+                },
                 Content = x.Content,
                 CreatedDateUtc = x.CreatedDateUtc,
                 Score = x.Score,

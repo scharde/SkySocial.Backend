@@ -10,7 +10,9 @@ public partial class CommentsResource
         if (page < 1 || pageSize < 1)
             throw new BadRequestException("Invalid pagination values");
 
-        var query = _dbContext.Comments
+
+        var query = dbContext.Comments
+            .Include(p => p.Author)
             .Where(x => x.PostId == postId && x.ParentCommentId == null)
             .OrderByDescending(c => c.CreatedDateUtc);
 
@@ -22,14 +24,18 @@ public partial class CommentsResource
             .Select(x => new CommentResponse()
             {
                 Id = x.Id,
-                AuthorId = x.AuthorId,
+                Author = new AuthorDetail()
+                {
+                    Id = x.AuthorId,
+                    Name = x.Author.ToString()
+                },
                 Content = x.Content,
                 CreatedDateUtc = x.CreatedDateUtc,
                 Score = x.Score,
                 ParentCommentId = x.ParentCommentId
             })
             .ToListAsync();
-        
+
         return new PageResponse<CommentResponse>()
         {
             TotalCount = totalCount,

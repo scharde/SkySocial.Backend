@@ -2,7 +2,14 @@
 
 public class BaseEntity
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public DateTime CreatedDateUtc { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedDateUtc { get; set; } = DateTime.UtcNow;
+    public Guid Id { get; set; }
+    public DateTime CreatedDateUtc { get; set; }
+    public DateTime UpdatedDateUtc { get; set; }
+    
+    public BaseEntity()
+    {
+        Id = Guid.NewGuid();
+        CreatedDateUtc = DateTime.UtcNow;
+        UpdatedDateUtc = DateTime.UtcNow;
+    }
 }
