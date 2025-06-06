@@ -22,16 +22,16 @@ public class AuthController(
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        var token = await _authResource.RegisterAsync(request);
-        return Ok(new { token });
+        await _authResource.RegisterAsync(request);
+        return Ok();
     }
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] RegisterRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var token = await _authResource.LoginAsync(request.Email, request.Password);
-        return Ok(new { token });
+        await _authResource.LoginAsync(request.Email, request.Password);
+        return Ok();
     }
 
     [HttpGet("google-login")]
@@ -76,7 +76,12 @@ public class AuthController(
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-
+        
+        foreach (var cookie in HttpContext.Request.Cookies.Keys)
+        {
+            Response.Cookies.Delete(cookie);
+        }   
+        
         return Ok();
     }
 
