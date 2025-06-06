@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = ["curl", "unzip"]
+
+[phases.install]
+cmds = [
+  "curl -SL https://download.visualstudio.microsoft.com/download/pr/2f35e5aa-4dd2-41bb-a82e-7eebc66de35a/91fcb9f276360e0519a81a0c1ae57e3d/dotnet-sdk-9.0.0-preview.4.24267.6-linux-x64.tar.gz -o dotnet.tar.gz",
+  "mkdir -p $HOME/.dotnet && tar -zxf dotnet.tar.gz -C $HOME/.dotnet",
+  "export PATH=$HOME/.dotnet:$PATH"
+]
+
+[phases.build]
+cmds = [
+  "$HOME/.dotnet/dotnet restore",
+  "$HOME/.dotnet/dotnet build -c Release"
+]
+
+[phases.start]
+cmd = "$HOME/.dotnet/dotnet API.Web.dll"
