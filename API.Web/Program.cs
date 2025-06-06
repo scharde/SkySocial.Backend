@@ -9,6 +9,7 @@ using API;
 using API.Web.Middleware;
 using DAL.Entity;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -117,7 +118,7 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<SocialDbContext>();
-    db.Database.Migrate(); // auto-run migrations
+    db.Database.Migrate();
 }
 
 app.UseCors("AllowSpecificOrigins");
