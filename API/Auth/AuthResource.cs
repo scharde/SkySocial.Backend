@@ -8,8 +8,8 @@ namespace API.Auth;
 
 public interface IAuthResource
 {
-    Task<(string jwtToken, DateTime expiresAtUtc)> RegisterAsync(RegisterRequest registerRequest);
-    Task<(string jwtToken, DateTime expiresAtUtc)> LoginAsync(string email, string password);
+    Task RegisterAsync(RegisterRequest registerRequest);
+    Task LoginAsync(string email, string password);
     Task<string> ExternalLoginAsync(ExternalLoginDto dto);
     Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal);
 }
