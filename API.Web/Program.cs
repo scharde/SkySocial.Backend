@@ -16,33 +16,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(JwtOptions.JwtOptionsKey));
 
+// === CORS Config ===
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins(builder.Configuration.GetValue<string>("CorsSettings:AllowedOrigins").Split(',', StringSplitOptions.RemoveEmptyEntries))
+            .AllowAnyHeader()
+            .WithMethods(builder.Configuration.GetValue<string>("CorsSettings:AllowedMethods").Split(',', StringSplitOptions.RemoveEmptyEntries))
+            .AllowCredentials();
+    });
+});
+
 // === Cookie Authentication Config ===
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.ExpireTimeSpan = TimeSpan.FromHours(6);
-    options.SlidingExpiration = true;
-});
-
-// === CORS Config ===
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigins", policy =>
-    {
-        policy.WithOrigins(
-                builder.Configuration
-                    .GetValue<string>("CorsSettings:AllowedOrigins")
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            )
-            .AllowCredentials()
-            .AllowAnyHeader()
-            .WithMethods(
-                builder.Configuration
-                    .GetValue<string>("CorsSettings:AllowedMethods")
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            );
-    });
 });
 
 // === Identity ===
