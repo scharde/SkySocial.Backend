@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     [DbContext(typeof(SocialDbContext))]
-    [Migration("20250607191734_Follow EF Updated column name")]
-    partial class FollowEFUpdatedcolumnname
+    [Migration("20250607194808_UpdatedColumnNameInFollow")]
+    partial class UpdatedColumnNameInFollow
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
