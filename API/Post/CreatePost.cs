@@ -5,7 +5,7 @@ namespace API.Post;
 
 public partial class PostResource
 {
-    public async Task<PostEntity> CreatePost(PostCreateRequest request, Guid userId)
+    public async Task<PostResponse> CreatePost(PostCreateRequest request, Guid userId)
     {
         if (userId == Guid.Empty)
             throw new UnauthorizedAccessException();
@@ -18,6 +18,7 @@ public partial class PostResource
 
         await _dbContext.Posts.AddAsync(post);
         await _dbContext.SaveChangesAsync(); 
-        return post;
+        
+        return await GetById(userId, post.Id);
     }
 }

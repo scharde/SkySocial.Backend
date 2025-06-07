@@ -31,13 +31,6 @@ public partial class CommentsResource
         await _dbContext.Comments.AddAsync(comment);
         await _dbContext.SaveChangesAsync();
 
-        return new CommentResponse()
-        {
-            Id = comment.Id,
-            Author = new AuthorDetail() { Id = comment.AuthorId },
-            Content = comment.Content,
-            CreatedDateUtc = comment.CreatedDateUtc,
-            ParentCommentId = comment.ParentCommentId
-        };
+        return await GetById(comment.Id);
     }
 }

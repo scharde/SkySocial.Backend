@@ -1,4 +1,3 @@
-using DAL.Entity;
 using DAL.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +5,7 @@ namespace API.Post;
 
 public partial class PostResource
 {
-    public async Task<PostEntity> EditPost(Guid postId, PostUpdateRequest request, Guid userId)
+    public async Task<PostResponse> EditPost(Guid postId, PostUpdateRequest request, Guid userId)
     {
         var existingPost = await _dbContext.Posts.SingleOrDefaultAsync(x => x.Id == postId);
         if (existingPost is null)
@@ -20,6 +19,6 @@ public partial class PostResource
 
         await _dbContext.SaveChangesAsync();
         
-        return existingPost;
+        return await GetById(userId, existingPost.Id);
     }
 }

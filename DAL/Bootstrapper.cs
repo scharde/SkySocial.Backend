@@ -29,7 +29,7 @@ public static class Bootstrapper
             Username = userInfo[0],
             Password = userInfo[1],
             Database = dbUri.LocalPath.Trim('/'),
-            SslMode = SslMode.Require,
+            SslMode = SslMode.Disable,
             TrustServerCertificate = true
         }.ToString();
 

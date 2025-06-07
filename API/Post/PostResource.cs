@@ -6,9 +6,10 @@ namespace API.Post;
 
 public interface IPostResource
 {
+    Task<PostResponse> GetById(Guid userId, Guid id);
     Task<PageResponse<PostResponse>> GetFeed(Guid userId, int page = 1, int pageSize = 10);
-    Task<PostEntity> CreatePost(PostCreateRequest request, Guid userId);
-    Task<PostEntity> EditPost(Guid postId, PostUpdateRequest request, Guid userId);
+    Task<PostResponse> CreatePost(PostCreateRequest request, Guid userId);
+    Task<PostResponse> EditPost(Guid postId, PostUpdateRequest request, Guid userId);
 }
 
 public partial class PostResource(SocialDbContext dbContext) : IPostResource
