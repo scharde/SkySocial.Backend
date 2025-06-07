@@ -30,8 +30,8 @@ public class AuthController(
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        await _authResource.LoginAsync(request.Email, request.Password);
-        return Ok();
+        var tokenResponse = await _authResource.LoginAsync(request.Email, request.Password);
+        return Ok(tokenResponse);
     }
 
     [HttpGet("google-login")]
@@ -59,16 +59,15 @@ public class AuthController(
             return Unauthorized();
         }
 
-        await _authResource.LoginWithGoogleAsync(result.Principal);
-
+        var tokenResponse = await _authResource.LoginWithGoogleAsync(result.Principal);
+        string modifiedReturnUrl =
+            $"{returnUrl}?token={Uri.EscapeDataString(tokenResponse.Token)}&expiryTime={tokenResponse.ExpiryTime}&refresh={tokenResponse.RefreshToken}";
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
-            return LocalRedirect(returnUrl);
+            return LocalRedirect(modifiedReturnUrl);
         }
-        else
-        {
-            return Redirect(returnUrl);
-        }
+
+        return Redirect(modifiedReturnUrl);
     }
 
     [HttpGet("logout")]
@@ -76,12 +75,12 @@ public class AuthController(
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        
+
         foreach (var cookie in HttpContext.Request.Cookies.Keys)
         {
             Response.Cookies.Delete(cookie);
-        }   
-        
+        }
+
         return Ok();
     }
 

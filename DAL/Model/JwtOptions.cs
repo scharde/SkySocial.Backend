@@ -9,3 +9,10 @@ public class JwtOptions
     public string Audience { get; set; }
     public int ExpirationTimeInMinutes { get; set; }  
 }
+
+public record TokenResponse
+{
+    public string Token { get; set; }
+    public string RefreshToken { get; set; }
+    public DateTime ExpiryTime { get; set; }
+}

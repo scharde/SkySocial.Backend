@@ -7,13 +7,13 @@ namespace API.Auth;
 
 public partial class AuthResource
 {
-    public async Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal)
+    public async Task<TokenResponse> LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal)
     {
         if (claimsPrincipal == null)
         {
             throw new Exception("Google: ClaimsPrincipal is null");
         }
-        
+
         var email = claimsPrincipal.FindFirstValue(ClaimTypes.Email);
         if (email == null)
         {
@@ -30,7 +30,7 @@ public partial class AuthResource
                 FirstName = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
                 LastName = claimsPrincipal.FindFirstValue(ClaimTypes.Surname) ?? string.Empty,
                 EmailConfirmed = true,
-                Title = null
+                Title = string.Empty
             };
 
             var result = await _userManager.CreateAsync(newUser);
@@ -38,9 +38,9 @@ public partial class AuthResource
             {
                 throw new Exception("GoogleGoogle: Unable to create user: ");
             }
-            
+
             user = newUser;
-            
+
             var info = new UserLoginInfo("Google",
                 claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,
                 "Google");
@@ -51,17 +51,7 @@ public partial class AuthResource
                 throw new Exception("Google: Unable to login user: ");
             }
         }
-        
-        var (jwtToken, expirationDateInUtc) = _tokenProcessor.GenerateJwtToken(user);
-        var refreshTokenValue = _tokenProcessor.GenerateRefreshToken();
-        var refreshTokenExpirationDateInUtc = DateTime.UtcNow.AddDays(7);
 
-        user.RefreshToken = refreshTokenValue;
-        user.RefreshTokenExpiresAtUtc = refreshTokenExpirationDateInUtc;
-
-        await _userManager.UpdateAsync(user);
-        
-        _tokenProcessor.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", jwtToken, expirationDateInUtc);
-        _tokenProcessor.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", user.RefreshToken, refreshTokenExpirationDateInUtc);
+        return _tokenProcessor.GetTokenResponse(user);
     }
 }

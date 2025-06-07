@@ -13,8 +13,7 @@ namespace API.TokenProcessor;
 
 public interface IAuthTokenProcessor
 {
-    (string jwtToken, DateTime expiresAtUtc) GenerateJwtToken(ApplicationUser user);
-    string GenerateRefreshToken();
+    TokenResponse GetTokenResponse(ApplicationUser user);
     void WriteAuthTokenAsHttpOnlyCookie(string cookieName, string token, DateTime expiration);
 }
 
@@ -24,7 +23,7 @@ public class AuthTokenProcessor(IOptions<JwtOptions> jwtOptions, IHttpContextAcc
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
 
-    public (string jwtToken, DateTime expiresAtUtc) GenerateJwtToken(ApplicationUser user)
+    private (string jwtToken, DateTime expiresAtUtc) GenerateJwtToken(ApplicationUser user)
     {
         var signingKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_jwtOptions.Secret));
@@ -55,12 +54,23 @@ public class AuthTokenProcessor(IOptions<JwtOptions> jwtOptions, IHttpContextAcc
         return (jwtToken, expires);
     }
 
-    public string GenerateRefreshToken()
+    private string GenerateRefreshToken()
     {
         var randomNumber = new byte[64];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
+    }
+
+    public TokenResponse GetTokenResponse(ApplicationUser user)
+    {
+        var (token, expiryTime) = GenerateJwtToken(user);
+        return new TokenResponse()
+        {
+            Token = token,
+            ExpiryTime = expiryTime,
+            RefreshToken = GenerateRefreshToken()
+        };
     }
 
     public void WriteAuthTokenAsHttpOnlyCookie(string cookieName, string token, DateTime expiration)

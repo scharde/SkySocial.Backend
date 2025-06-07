@@ -9,9 +9,9 @@ namespace API.Auth;
 public interface IAuthResource
 {
     Task RegisterAsync(RegisterRequest registerRequest);
-    Task LoginAsync(string email, string password);
+    Task<TokenResponse> LoginAsync(string email, string password);
     Task<string> ExternalLoginAsync(ExternalLoginDto dto);
-    Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal);
+    Task<TokenResponse> LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal);
 }
 
 public partial class AuthResource(
