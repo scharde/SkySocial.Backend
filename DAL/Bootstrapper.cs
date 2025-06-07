@@ -10,7 +10,15 @@ public static class Bootstrapper
     public static IServiceCollection AddDAL(this IServiceCollection services, IConfigurationRoot configuration)
     {
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? configuration.GetConnectionString("DefaultConnection");
-
+        if (configuration.GetConnectionString("Platform") == "SQLServer")
+        {
+            services.AddDbContext<SocialDbContext>(options =>
+                options.UseSqlServer(connectionString)
+            );
+            
+            return services;
+        }
+        
         var dbUri = new Uri(connectionString);
         var userInfo = dbUri.UserInfo.Split(':');
 
@@ -24,7 +32,6 @@ public static class Bootstrapper
             SslMode = SslMode.Require,
             TrustServerCertificate = true
         }.ToString();
-
 
         services.AddDbContext<SocialDbContext>(options =>
             options.UseNpgsql(npgsqlConnStr)
