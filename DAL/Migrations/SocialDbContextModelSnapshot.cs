@@ -180,7 +180,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("FollowerId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("FolloweeId")
+                    b.Property<Guid>("FollowingToId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDateUtc")
@@ -195,9 +195,9 @@ namespace DAL.Migrations
                     b.Property<DateTime>("UpdatedDateUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("FollowerId", "FolloweeId");
+                    b.HasKey("FollowerId", "FollowingToId");
 
-                    b.HasIndex("FolloweeId");
+                    b.HasIndex("FollowingToId");
 
                     b.ToTable("Follower", (string)null);
                 });
@@ -466,21 +466,21 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entity.FollowerEntity", b =>
                 {
-                    b.HasOne("DAL.Entity.ApplicationUser", "Followee")
-                        .WithMany()
-                        .HasForeignKey("FolloweeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DAL.Entity.ApplicationUser", "Follower")
                         .WithMany()
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Followee");
+                    b.HasOne("DAL.Entity.ApplicationUser", "FollowingTo")
+                        .WithMany()
+                        .HasForeignKey("FollowingToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Follower");
+
+                    b.Navigation("FollowingTo");
                 });
 
             modelBuilder.Entity("DAL.Entity.PostEntity", b =>

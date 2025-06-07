@@ -10,7 +10,7 @@ public partial class PostResource
     {
         var followedUserIds = await _dbContext.Followers
             .Where(x => x.FollowerId == userId)
-            .Select(c => c.FolloweeId)
+            .Select(c => c.FollowingToId)
             .ToListAsync();
 
         var query = dbContext.Posts
@@ -48,7 +48,6 @@ public partial class PostResource
                     Id = x.Post.AuthorId, 
                     Name = $"{x.Post.Author.FirstName} {x.Post.Author.LastName}",
                     Title = x.Post.Author.Title,
-                    IsFollowing = x.IsFollowedAuthor,
                 },
                 Score = x.Score,
                 CommentCount = x.CommentCount,

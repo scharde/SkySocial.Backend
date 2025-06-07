@@ -29,7 +29,7 @@ public class SocialDbContext(DbContextOptions<SocialDbContext> options): Identit
         builder.Entity<ApplicationUser>().ToTable("User");
 
         builder.Entity<FollowerEntity>()
-            .HasKey(f => new { f.FollowerId, f.FolloweeId });
+            .HasKey(f => new { f.FollowerId, FolloweeId = f.FollowingToId });
 
         builder.Entity<PostEntity>()
             .HasMany(f => f.Comments)
@@ -50,9 +50,9 @@ public class SocialDbContext(DbContextOptions<SocialDbContext> options): Identit
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<FollowerEntity>()
-            .HasOne(f => f.Followee)
+            .HasOne(f => f.FollowingTo)
             .WithMany()
-            .HasForeignKey(f => f.FolloweeId)
+            .HasForeignKey(f => f.FollowingToId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<CommentEntity>()

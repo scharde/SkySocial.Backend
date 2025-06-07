@@ -1,5 +1,6 @@
 ﻿using API.Auth;
 using API.Comments;
+using API.Follow;
 using API.Post;
 using API.PostVote;
 using API.TokenProcessor;
@@ -20,6 +21,7 @@ public static class Bootstrapper
             .AddTransient<IPostResource, PostResource>()
             .AddTransient<IUserResource, UserResource>()
             .AddTransient<IPostVoteResource, PostVoteResource>()
+            .AddTransient<IFollowResource, FollowResource>()
             .AddTransient<ICommentsResource, CommentsResource>();
 
         return services;

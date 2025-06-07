@@ -17,5 +17,4 @@ public class AuthorDetail
     public string Name { get; set; }
     public string Title { get; set; }
     public string Avatar { get; set; }
-    public bool IsFollowing { get; set; }
 }
