@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitIdentity : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -167,7 +167,7 @@ namespace DAL.Migrations
                 columns: table => new
                 {
                     FollowerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FolloweeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FollowingToId = table.Column<Guid>(type: "uuid", nullable: false),
                     FollowedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDateUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -175,16 +175,16 @@ namespace DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Follower", x => new { x.FollowerId, x.FolloweeId });
+                    table.PrimaryKey("PK_Follower", x => new { x.FollowerId, x.FollowingToId });
                     table.ForeignKey(
-                        name: "FK_Follower_User_FolloweeId",
-                        column: x => x.FolloweeId,
+                        name: "FK_Follower_User_FollowerId",
+                        column: x => x.FollowerId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Follower_User_FollowerId",
-                        column: x => x.FollowerId,
+                        name: "FK_Follower_User_FollowingToId",
+                        column: x => x.FollowingToId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -378,9 +378,9 @@ namespace DAL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Follower_FolloweeId",
+                name: "IX_Follower_FollowingToId",
                 table: "Follower",
-                column: "FolloweeId");
+                column: "FollowingToId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Post_AuthorId",
