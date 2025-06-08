@@ -38,7 +38,10 @@ public class AuthController(
     [AllowAnonymous]
     public IActionResult LoginGoogle([FromQuery] string returnUrl, [FromServices] LinkGenerator linkGenerator)
     {
-        var callbackUrl = linkGenerator.GetPathByName(HttpContext, "GoogleLoginCallback")
+        var callbackUrl = linkGenerator.GetUriByName(HttpContext, "GoogleLoginCallback",
+                              values: null,
+                              scheme: "https"
+                          )
                           ?? "/api/auth/google-login-callback";
 
         var properties = _signInManager.ConfigureExternalAuthenticationProperties(

@@ -9,7 +9,7 @@ public static class Bootstrapper
 {
     public static IServiceCollection AddDAL(this IServiceCollection services, IConfigurationRoot configuration)
     {
-        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? configuration.GetConnectionString("DefaultConnection");
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
         if (configuration.GetConnectionString("Platform") == "SQLServer")
         {
             services.AddDbContext<SocialDbContext>(options =>
