@@ -36,26 +36,23 @@ public class AuthController(
 
     [HttpGet("google-login")]
     [AllowAnonymous]
-    public IActionResult LoginGoogle([FromQuery] string returnUrl, [FromServices] LinkGenerator linkGenerator)
+    public IActionResult LoginGoogle([FromQuery] string returnUrl)
     {
-        var callbackUrl = linkGenerator.GetUriByName(HttpContext, "GoogleLoginCallback",
-                              values: null,
-                              scheme: "https"
-                          )
-                          ?? "/api/auth/google-login-callback";
-
-        var properties = _signInManager.ConfigureExternalAuthenticationProperties(
-            "Google",
-            $"{callbackUrl}?returnUrl={Uri.EscapeDataString(returnUrl)}"
-        );
-
-        return Challenge(properties, new[] { "Google" });
+        var redirectUrl = Url.Action("ExternalLoginCallback", "Auth", new { returnUrl });
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+        return Challenge(properties, "Google");
     }
 
-    [HttpGet("google-login-callback", Name = "GoogleLoginCallback")]
+    [HttpGet("external-login-callback")]
     [AllowAnonymous]
-    public async Task<IActionResult> GoogleLoginCallback([FromQuery] string returnUrl = "/")
+    public async Task<IActionResult> ExternalLoginCallback([FromQuery] string returnUrl = "/")
     {
+        var info = await _signInManager.GetExternalLoginInfoAsync();
+        if (info == null)
+        {
+            return Unauthorized();
+        }
+
         var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
         if (!result.Succeeded)
         {
