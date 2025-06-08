@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using API;
 using API.Web.Middleware;
 using DAL.Entity;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -122,6 +123,14 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors("AllowSpecificOrigins");
 app.UseHttpsRedirection();
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    KnownNetworks = { }, // Clear default restrictions
+    KnownProxies = { }
+});
+
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
